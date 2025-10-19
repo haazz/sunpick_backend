@@ -10,6 +10,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * 전역 예외 처리
+ * <p>
+ * 컨트롤러에서 발생한 예외를 가로채 간단한 HTTP 상태 코드와 메시지로 변환
+ * </p>
+ *
+ * @author haazz
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
