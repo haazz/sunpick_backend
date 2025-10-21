@@ -32,9 +32,18 @@ public class StoreService {
 
     public List<StoreResponse> getStoreAll() {
         return storeRepository.findAll().stream()
-            .map(store -> new StoreResponse(
-                store.getId(), store.getName(), store.getDescription(), store.getOwnerName())
-            )
+            .map(this::toResponse)
             .toList();
+    }
+
+    public StoreResponse getStoreById(Integer id) {
+        Store store = storeRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("상점 ID: " + id + "가 존재하지 않습니다."));
+        return toResponse(store);
+    }
+
+    private StoreResponse toResponse(Store store) {
+        return new StoreResponse(store.getId(), store.getName(), store.getDescription(),
+            store.getOwnerName());
     }
 }
