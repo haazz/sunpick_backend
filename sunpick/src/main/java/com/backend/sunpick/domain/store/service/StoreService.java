@@ -3,8 +3,10 @@ package com.backend.sunpick.domain.store.service;
 import com.backend.sunpick.domain.member.entity.Member;
 import com.backend.sunpick.domain.member.repository.MemberRepository;
 import com.backend.sunpick.domain.store.dto.request.StoreCreateRequest;
+import com.backend.sunpick.domain.store.dto.response.StoreResponse;
 import com.backend.sunpick.domain.store.entity.Store;
 import com.backend.sunpick.domain.store.repository.StoreRepository;
+import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,5 +28,13 @@ public class StoreService {
             .description(storeCreateRequest.description())
             .ownerName(member.getName())
             .build());
+    }
+
+    public List<StoreResponse> getStoreAll() {
+        return storeRepository.findAll().stream()
+            .map(store -> new StoreResponse(
+                store.getId(), store.getName(), store.getDescription(), store.getOwnerName())
+            )
+            .toList();
     }
 }

@@ -1,8 +1,10 @@
 package com.backend.sunpick.domain.store.controller;
 
 import com.backend.sunpick.domain.store.dto.request.StoreCreateRequest;
+import com.backend.sunpick.domain.store.dto.response.StoreResponse;
 import com.backend.sunpick.domain.store.service.StoreService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +30,9 @@ public class StoreController {
     }
 
     @GetMapping
-    public ResponseEntity<Void> getStoreAll() {
-        return null;
+    public ResponseEntity<List<StoreResponse>> getStoreAll() {
+        List<StoreResponse> response = storeService.getStoreAll();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
