@@ -26,7 +26,7 @@ public class StoreService {
                 "회원 ID: " + request.memberId() + "가 존재하지 안습니다."));
         storeRepository.save(Store.builder()
             .member(member)
-            .name(request.storeName())
+            .name(request.name())
             .description(request.description())
             .ownerName(member.getName())
             .build());

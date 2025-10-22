@@ -12,7 +12,7 @@ public record StoreCreateRequest(
 
     @NotBlank(message = "상점명은 필수입니다.")
     @Size(max = 20, message = "상점명은 20자 이하로 입력해 주세요.")
-    String storeName,
+    String name,
 
     @Size(max = 100, message = "상점 설명은 100자 이하로 입력해 주세요.")
     String description
