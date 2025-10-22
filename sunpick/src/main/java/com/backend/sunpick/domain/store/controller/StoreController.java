@@ -1,6 +1,7 @@
 package com.backend.sunpick.domain.store.controller;
 
 import com.backend.sunpick.domain.store.dto.request.StoreCreateRequest;
+import com.backend.sunpick.domain.store.dto.request.StoreModifyRequest;
 import com.backend.sunpick.domain.store.dto.response.StoreResponse;
 import com.backend.sunpick.domain.store.service.StoreService;
 import jakarta.validation.Valid;
@@ -36,18 +37,19 @@ public class StoreController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<StoreResponse> getStoreById(@PathVariable Integer id) {
-        StoreResponse response = storeService.getStoreById(id);
+    @GetMapping("/{storeId}")
+    public ResponseEntity<StoreResponse> getStoreById(@PathVariable Integer storeId) {
+        StoreResponse response = storeService.getStoreById(storeId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PatchMapping("{id}")
-    public ResponseEntity<Void> modifyStore() {
-        return null;
+    @PatchMapping("/{storeId}")
+    public ResponseEntity<Void> modifyStore(@PathVariable Integer storeId, @RequestBody @Valid StoreModifyRequest request) {
+        storeService.modifyStore(storeId, request);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{stored}")
     public ResponseEntity<Void> deleteStore() {
         return null;
     }

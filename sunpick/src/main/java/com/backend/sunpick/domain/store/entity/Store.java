@@ -40,4 +40,22 @@ public class Store extends BaseEntity {
     @Column(name = "owner_name", length = 6, nullable = false)
     private String ownerName;
 
+    public void changeName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("상점명은 비어있을 수 없습니다.");
+        }
+        this.name = name;
+    }
+
+    public void changeDescription(String description) {
+        this.description = description;
+    }
+
+    public void changeOwner(Member member) {
+        if (member == null || member.getName() == null || member.getName().isBlank()) {
+            throw new IllegalArgumentException("회원과 회원명은 비어있을 수 없습니다.");
+        }
+        this.member = member;
+        this.ownerName = member.getName();
+    }
 }
