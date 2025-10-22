@@ -49,8 +49,9 @@ public class StoreController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @DeleteMapping("/{stored}")
-    public ResponseEntity<Void> deleteStore() {
-        return null;
+    @DeleteMapping("/{storeId}")
+    public ResponseEntity<Void> deleteStore(@PathVariable Integer storeId) {
+        storeService.deleteStore(storeId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

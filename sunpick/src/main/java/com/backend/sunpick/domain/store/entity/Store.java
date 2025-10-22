@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.NoSuchElementException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +41,9 @@ public class Store extends BaseEntity {
     @Column(name = "owner_name", length = 6, nullable = false)
     private String ownerName;
 
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted;
+
     public void changeName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("상점명은 비어있을 수 없습니다.");
@@ -57,5 +61,12 @@ public class Store extends BaseEntity {
         }
         this.member = member;
         this.ownerName = member.getName();
+    }
+
+    public void delete() {
+        if (isDeleted) {
+            throw new NoSuchElementException("상점 ID: " + id + "는 이미 삭제되었습니다.");
+        }
+        isDeleted = true;
     }
 }

@@ -49,10 +49,13 @@ public class StoreService {
         Store store = storeRepository.findById(storeId)
             .orElseThrow(() -> new NoSuchElementException("상점 ID: " + storeId + "가 존재하지 않습니다."));
 
+        if (store.isDeleted()) {
+            throw new NoSuchElementException("상점 ID: " + storeId + "는 삭제되었습니다.");
+        }
         if (request.memberId() != null) {
             Member member = memberRepository.findById(request.memberId())
                 .orElseThrow(() -> new NoSuchElementException(
-                    "회원 ID: " + request.memberId() + "가 존재하지 안습니다."));
+                    "회원 ID: " + request.memberId() + "가 존재하지 않습니다."));
             store.changeOwner(member);
         }
         if (request.name() != null) {
@@ -61,6 +64,13 @@ public class StoreService {
         if (request.description() != null) {
             store.changeDescription(request.description());
         }
+    }
+
+    @Transactional
+    public void deleteStore(Integer storeId) {
+        Store store = storeRepository.findById(storeId)
+            .orElseThrow(() -> new NoSuchElementException("상점 ID: " + storeId + "가 존재하지 않습니다."));
+        store.delete();
     }
 
     private StoreResponse toResponse(Store store) {
