@@ -20,6 +20,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public void createStore(StoreCreateRequest request) {
         Member member = memberRepository.findById(request.memberId())
             .orElseThrow(() -> new NoSuchElementException(
@@ -32,12 +33,14 @@ public class StoreService {
             .build());
     }
 
+    @Transactional(readOnly = true)
     public List<StoreResponse> getStoreAll() {
         return storeRepository.findAll().stream()
             .map(this::toResponse)
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public StoreResponse getStoreById(Integer storeId) {
         Store store = storeRepository.findById(storeId)
             .orElseThrow(() -> new NoSuchElementException("상점 ID: " + storeId + "가 존재하지 않습니다."));
