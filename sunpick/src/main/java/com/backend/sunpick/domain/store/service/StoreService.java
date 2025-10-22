@@ -9,6 +9,7 @@ import com.backend.sunpick.domain.store.entity.Store;
 import com.backend.sunpick.domain.store.repository.StoreRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,18 +56,15 @@ public class StoreService {
         if (store.isDeleted()) {
             throw new NoSuchElementException("상점 ID: " + storeId + "는 삭제되었습니다.");
         }
-        if (request.memberId() != null) {
-            Member member = memberRepository.findById(request.memberId())
+
+        Optional.ofNullable(request.memberId()).ifPresent(memberId -> {
+            Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NoSuchElementException(
-                    "회원 ID: " + request.memberId() + "가 존재하지 않습니다."));
+                    "회원 ID: " + memberId + "가 존재하지 않습니다."));
             store.changeOwner(member);
-        }
-        if (request.name() != null) {
-            store.changeName(request.name());
-        }
-        if (request.description() != null) {
-            store.changeDescription(request.description());
-        }
+        });
+        Optional.ofNullable(request.name()).ifPresent(store::changeName);
+        Optional.ofNullable(request.description()).ifPresent(store::changeDescription);
     }
 
     @Transactional
