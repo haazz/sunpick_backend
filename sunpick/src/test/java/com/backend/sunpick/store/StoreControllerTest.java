@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -62,7 +63,8 @@ public class StoreControllerTest {
         mockMvc.perform(post("/api/store")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string("회원 ID는 필수입니다."));
 
         Mockito.verify(storeService, Mockito.never()).createStore(any());
     }
@@ -75,7 +77,8 @@ public class StoreControllerTest {
         mockMvc.perform(post("/api/store")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string("회원 ID는 1 이상의 값이어야 합니다."));
 
         Mockito.verify(storeService, Mockito.never()).createStore(any());
     }
@@ -88,7 +91,8 @@ public class StoreControllerTest {
         mockMvc.perform(post("/api/store")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string("상점명은 필수입니다."));
 
         Mockito.verify(storeService, Mockito.never()).createStore(any());
     }
@@ -102,7 +106,8 @@ public class StoreControllerTest {
         mockMvc.perform(post("/api/store")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string("상점명은 20자 이하로 입력해 주세요."));
 
         Mockito.verify(storeService, Mockito.never()).createStore(any());
     }
@@ -170,7 +175,8 @@ public class StoreControllerTest {
         mockMvc.perform(patch("/api/store/{storeId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string("회원 ID는 1 이상의 값이어야 합니다."));
 
         Mockito.verify(storeService, Mockito.never())
             .modifyStore(any(Integer.class), any(StoreModifyRequest.class));
@@ -185,7 +191,8 @@ public class StoreControllerTest {
         mockMvc.perform(patch("/api/store/{storeId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isBadRequest())
+            .andExpect(content().string("상점명은 20자 이하로 입력해 주세요."));
 
         Mockito.verify(storeService, Mockito.never())
             .modifyStore(any(Integer.class), any(StoreModifyRequest.class));
