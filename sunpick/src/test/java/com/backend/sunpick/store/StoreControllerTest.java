@@ -1,5 +1,6 @@
 package com.backend.sunpick.store;
 
+import com.backend.sunpick.domain.store.dto.request.StoreModifyRequest;
 import com.backend.sunpick.domain.store.dto.response.StoreResponse;
 import com.backend.sunpick.global.config.TestSecurityConfig;
 import com.backend.sunpick.domain.store.controller.StoreController;
@@ -20,7 +21,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -145,20 +148,46 @@ public class StoreControllerTest {
         Mockito.verify(storeService, Mockito.times(1)).getStoreById(storeId);
     }
 
-
     @Test
-    @DisplayName("GET /api/store/{storeId} - 상점이 없으면 404 Not Found")
-    void getStoreById_notFound() throws Exception {
-        int storeId = 999;
+    @DisplayName("PATCH /api/store/{id} - 상점 수정 204 No Content")
+    void modifyStore_success() throws Exception {
+        StoreModifyRequest request = new StoreModifyRequest(1, "new store", "new description");
 
-        when(storeService.getStoreById(storeId))
-            .thenThrow(new NoSuchElementException("상점 ID: " + storeId + "가 존재하지 않습니다."));
+        mockMvc.perform(patch("/api/store/{storeId}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/api/store/{storeId}", storeId))
-            .andExpect(status().isNotFound());
-
-        Mockito.verify(storeService, Mockito.times(1)).getStoreById(storeId);
+        Mockito.verify(storeService, Mockito.times(1))
+            .modifyStore(any(Integer.class), any(StoreModifyRequest.class));
     }
 
+    @Test
+    @DisplayName("POST /api/store - 상점 수정 memberId가 0이면 400 Bad Request")
+    void modifyStore_fail_memberIdZero() throws Exception {
+        StoreModifyRequest request = new StoreModifyRequest(0, "storeName", "description");
 
+        mockMvc.perform(patch("/api/store/{storeId}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
+
+        Mockito.verify(storeService, Mockito.never())
+            .modifyStore(any(Integer.class), any(StoreModifyRequest.class));
+    }
+
+    @Test
+    @DisplayName("PATCH /api/store/{id} - 상점 수정 name이 20자 초과면 400 Bad Request")
+    void modifyStore_fail_nameTooLong() throws Exception {
+        String longName = "a".repeat(21);
+        StoreModifyRequest request = new StoreModifyRequest(1, longName, "description");
+
+        mockMvc.perform(patch("/api/store/{storeId}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest());
+
+        Mockito.verify(storeService, Mockito.never())
+            .modifyStore(any(Integer.class), any(StoreModifyRequest.class));
+    }
 }
