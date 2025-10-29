@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
         Optional<String> fieldMsg = e.getBindingResult().getFieldErrors().stream()
-            .map(fe -> fe.getField() + ": " + messageOrDefault(fe.getDefaultMessage(), "유효성 검증 오류"))
+            .map(fe -> messageOrDefault(fe.getDefaultMessage(), "유효성 검증 오류"))
             .findFirst();
 
         Optional<String> globalMsg = e.getBindingResult().getGlobalErrors().stream()
