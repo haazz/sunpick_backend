@@ -190,4 +190,13 @@ public class StoreControllerTest {
         Mockito.verify(storeService, Mockito.never())
             .modifyStore(any(Integer.class), any(StoreModifyRequest.class));
     }
+
+    @Test
+    @DisplayName("DELETE /api/store/{id} - 상점 삭제 204 No Content")
+    void deleteStore_success() throws Exception {
+        mockMvc.perform(delete("/api/store/{storeId}", 1))
+            .andExpect(status().isNoContent());
+
+        Mockito.verify(storeService, Mockito.times(1)).deleteStore(any(Integer.class));
+    }
 }
