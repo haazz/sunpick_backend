@@ -43,8 +43,6 @@ public class StoreServiceTest {
     @InjectMocks
     private StoreService storeService;
 
-    private static final int NON_EXISTENT_ID = Integer.MAX_VALUE;
-
     @Test
     @DisplayName("createStore() - 성공")
     void createStore_success() {
@@ -69,13 +67,13 @@ public class StoreServiceTest {
     @Test
     @DisplayName("createStore() - 실패 memberId가 존재하지 않는 경우")
     void createStore_fail_memberNotFound() {
-        StoreCreateRequest request = new StoreCreateRequest(NON_EXISTENT_ID, "storeName",
+        StoreCreateRequest request = new StoreCreateRequest(1, "storeName",
             "description");
-        when(memberRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+        when(memberRepository.findById(1)).thenReturn(Optional.empty());
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class,
             () -> storeService.createStore(request));
-        assertEquals("회원 ID: " + NON_EXISTENT_ID + "가 존재하지 않습니다.", exception.getMessage());
+        assertEquals("회원 ID: " + 1 + "가 존재하지 않습니다.", exception.getMessage());
         verify(storeRepository, never()).save(any(Store.class));
     }
 
@@ -112,9 +110,9 @@ public class StoreServiceTest {
         when(storeRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class,
-            () -> storeService.modifyStore(NON_EXISTENT_ID, request));
+            () -> storeService.modifyStore(1, request));
 
-        assertEquals("상점 ID: " + NON_EXISTENT_ID + "가 존재하지 않습니다.", exception.getMessage());
+        assertEquals("상점 ID: " + 1 + "가 존재하지 않습니다.", exception.getMessage());
     }
 
     @Test
@@ -136,14 +134,14 @@ public class StoreServiceTest {
         Store store = mock(Store.class);
         when(store.isDeleted()).thenReturn(false);
         when(storeRepository.findById(1)).thenReturn(Optional.of(store));
-        when(memberRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+        when(memberRepository.findById(1)).thenReturn(Optional.empty());
 
-        StoreModifyRequest request = new StoreModifyRequest(NON_EXISTENT_ID, "newName",
+        StoreModifyRequest request = new StoreModifyRequest(1, "newName",
             "newDescription");
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class,
             () -> storeService.modifyStore(1, request));
-        assertEquals("회원 ID: " + NON_EXISTENT_ID + "가 존재하지 않습니다.", exception.getMessage());
+        assertEquals("회원 ID: " + 1 + "가 존재하지 않습니다.", exception.getMessage());
     }
 
     @Test
@@ -167,9 +165,9 @@ public class StoreServiceTest {
         when(storeRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class,
-            () -> storeService.deleteStore(NON_EXISTENT_ID));
+            () -> storeService.deleteStore(1));
 
-        assertEquals("상점 ID: " + NON_EXISTENT_ID + "가 존재하지 않습니다.", exception.getMessage());
+        assertEquals("상점 ID: " + 1 + "가 존재하지 않습니다.", exception.getMessage());
     }
 
     @Test
@@ -241,11 +239,11 @@ public class StoreServiceTest {
     @Test
     @DisplayName("getStoreById() - 실패 storeId가 존재하지 않는 경우")
     void getStoreById_fail_storeNotFound() {
-        when(storeRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
+        when(storeRepository.findById(1)).thenReturn(Optional.empty());
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class,
-            () -> storeService.getStoreById(NON_EXISTENT_ID));
+            () -> storeService.getStoreById(1));
 
-        assertEquals("상점 ID: " + NON_EXISTENT_ID + "가 존재하지 않습니다.", exception.getMessage());
+        assertEquals("상점 ID: " + 1 + "가 존재하지 않습니다.", exception.getMessage());
     }
 }
