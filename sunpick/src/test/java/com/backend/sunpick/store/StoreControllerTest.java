@@ -116,8 +116,8 @@ public class StoreControllerTest {
     @DisplayName("GET /api/store - 상점 목록 조회 200 OK")
     void getStoreAll_success() throws Exception {
         List<StoreResponse> responses = List.of(
-            new StoreResponse(1, "store1", "description1", "owner1"),
-            new StoreResponse(2, "store2", "description2", "owner2")
+            new StoreResponse(1, "store1", "description1", 1, "owner1"),
+            new StoreResponse(2, "store2", "description2", 2, "owner2")
         );
         when(storeService.getStoreAll()).thenReturn(responses);
 
@@ -126,10 +126,12 @@ public class StoreControllerTest {
             .andExpect(jsonPath("$[0].id").value(1))
             .andExpect(jsonPath("$[0].name").value("store1"))
             .andExpect(jsonPath("$[0].description").value("description1"))
+            .andExpect(jsonPath("$[0].ownerId").value(1))
             .andExpect(jsonPath("$[0].ownerName").value("owner1"))
             .andExpect(jsonPath("$[1].id").value(2))
             .andExpect(jsonPath("$[1].name").value("store2"))
             .andExpect(jsonPath("$[1].description").value("description2"))
+            .andExpect(jsonPath("$[1].ownerId").value(2))
             .andExpect(jsonPath("$[1].ownerName").value("owner2"));
 
         Mockito.verify(storeService, Mockito.times(1)).getStoreAll();
@@ -139,7 +141,7 @@ public class StoreControllerTest {
     @DisplayName("GET /api/store/{storeId} - 상점 단건 조회 200 OK")
     void getStoreById_success() throws Exception {
         int storeId = 1;
-        StoreResponse response = new StoreResponse(storeId, "store", "description", "owner");
+        StoreResponse response = new StoreResponse(storeId, "store", "description", 1, "owner");
 
         when(storeService.getStoreById(storeId)).thenReturn(response);
 

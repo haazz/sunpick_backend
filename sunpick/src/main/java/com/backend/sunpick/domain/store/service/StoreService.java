@@ -76,6 +76,6 @@ public class StoreService {
 
     private StoreResponse toResponse(Store store) {
         return new StoreResponse(store.getId(), store.getName(), store.getDescription(),
-            store.getOwnerName());
+            store.getMember().getId(), store.getOwnerName());
     }
 }
