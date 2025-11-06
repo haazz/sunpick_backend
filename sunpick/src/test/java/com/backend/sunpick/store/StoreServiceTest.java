@@ -144,13 +144,27 @@ public class StoreServiceTest {
     @Test
     @DisplayName("deleteStore() - 성공")
     void deleteStore_success() {
+        Store store = Store.builder()
+            .name("name")
+            .description("description")
+            .ownerName("ownerName")
+            .build();
+        when(storeRepository.findById(1)).thenReturn(Optional.of(store));
 
+        storeService.deleteStore(1);
+
+        assertTrue(store.isDeleted());
     }
 
     @Test
     @DisplayName("deleteStore() - 실패 storeId가 존재하지 않는 경우")
     void deleteStore_fail_storeNotFound() {
+        when(storeRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class,
+            () -> storeService.deleteStore(NON_EXISTENT_ID));
+
+        assertEquals("상점 ID: " + NON_EXISTENT_ID + "가 존재하지 않습니다.", exception.getMessage());
     }
 
     @Test
