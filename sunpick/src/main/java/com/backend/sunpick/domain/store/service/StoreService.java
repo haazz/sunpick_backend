@@ -25,7 +25,7 @@ public class StoreService {
     public void createStore(StoreCreateRequest request) {
         Member member = memberRepository.findById(request.memberId())
             .orElseThrow(() -> new NoSuchElementException(
-                "회원 ID: " + request.memberId() + "가 존재하지 안습니다."));
+                "회원 ID: " + request.memberId() + "가 존재하지 않습니다."));
         storeRepository.save(Store.builder()
             .member(member)
             .name(request.name())
