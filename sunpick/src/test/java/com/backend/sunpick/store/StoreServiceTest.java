@@ -4,9 +4,11 @@ import com.backend.sunpick.domain.member.entity.Member;
 import com.backend.sunpick.domain.member.repository.MemberRepository;
 import com.backend.sunpick.domain.store.dto.request.StoreCreateRequest;
 import com.backend.sunpick.domain.store.dto.request.StoreModifyRequest;
+import com.backend.sunpick.domain.store.dto.response.StoreResponse;
 import com.backend.sunpick.domain.store.entity.Store;
 import com.backend.sunpick.domain.store.repository.StoreRepository;
 import com.backend.sunpick.domain.store.service.StoreService;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class StoreServiceTest {
+
     @Mock
     private StoreRepository storeRepository;
 
@@ -66,7 +69,8 @@ public class StoreServiceTest {
     @Test
     @DisplayName("createStore() - 실패 memberId가 존재하지 않는 경우")
     void createStore_fail_memberNotFound() {
-        StoreCreateRequest request = new StoreCreateRequest(NON_EXISTENT_ID, "storeName", "description");
+        StoreCreateRequest request = new StoreCreateRequest(NON_EXISTENT_ID, "storeName",
+            "description");
         when(memberRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class,
@@ -80,11 +84,11 @@ public class StoreServiceTest {
     void modifyStore_success() {
         Member oldOwner = mock(Member.class);
         Store store = Store.builder()
-                .name("name")
-                .description("description")
-                .ownerName("ownerName")
-                .member(oldOwner)
-                .build();
+            .name("name")
+            .description("description")
+            .ownerName("ownerName")
+            .member(oldOwner)
+            .build();
         when(storeRepository.findById(1)).thenReturn(Optional.of(store));
 
         Member newOwner = mock(Member.class);
@@ -134,7 +138,8 @@ public class StoreServiceTest {
         when(storeRepository.findById(1)).thenReturn(Optional.of(store));
         when(memberRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
-        StoreModifyRequest request = new StoreModifyRequest(NON_EXISTENT_ID, "newName", "newDescription");
+        StoreModifyRequest request = new StoreModifyRequest(NON_EXISTENT_ID, "newName",
+            "newDescription");
 
         NoSuchElementException exception = assertThrows(NoSuchElementException.class,
             () -> storeService.modifyStore(1, request));
@@ -170,18 +175,77 @@ public class StoreServiceTest {
     @Test
     @DisplayName("getStoreAll() - 성공")
     void getStoreAll_success() {
+        Member member1 = mock(Member.class);
+        when(member1.getId()).thenReturn(1);
 
+        Store store1 = mock(Store.class);
+        when(store1.getId()).thenReturn(1);
+        when(store1.getName()).thenReturn("store1");
+        when(store1.getDescription()).thenReturn("description1");
+        when(store1.getMember()).thenReturn(member1);
+        when(store1.getOwnerName()).thenReturn("ownerName1");
+
+        Member member2 = mock(Member.class);
+        when(member2.getId()).thenReturn(2);
+
+        Store store2 = mock(Store.class);
+        when(store2.getId()).thenReturn(2);
+        when(store2.getName()).thenReturn("store2");
+        when(store2.getDescription()).thenReturn("description2");
+        when(store2.getMember()).thenReturn(member2);
+        when(store2.getOwnerName()).thenReturn("ownerName2");
+
+        when(storeRepository.findAll()).thenReturn(List.of(store1, store2));
+
+        List<StoreResponse> response = storeService.getStoreAll();
+
+        assertEquals(2, response.size());
+
+        assertEquals(1, response.get(0).id());
+        assertEquals("store1", response.get(0).name());
+        assertEquals("description1", response.get(0).description());
+        assertEquals(1, response.get(0).ownerId());
+        assertEquals("ownerName1", response.get(0).ownerName());
+
+        assertEquals(2, response.get(1).id());
+        assertEquals("store2", response.get(1).name());
+        assertEquals("description2", response.get(1).description());
+        assertEquals(2, response.get(1).ownerId());
+        assertEquals("ownerName2", response.get(1).ownerName());
     }
 
     @Test
     @DisplayName("getStoreById() - 성공")
     void getStoreById_success() {
+        Member member = mock(Member.class);
+        when(member.getId()).thenReturn(1);
 
+        Store store = mock(Store.class);
+        when(store.getId()).thenReturn(1);
+        when(store.getName()).thenReturn("store");
+        when(store.getDescription()).thenReturn("description");
+        when(store.getMember()).thenReturn(member);
+        when(store.getOwnerName()).thenReturn("ownerName");
+
+        when(storeRepository.findById(1)).thenReturn(Optional.of(store));
+
+        StoreResponse response = storeService.getStoreById(1);
+
+        assertEquals(1, response.id());
+        assertEquals("store", response.name());
+        assertEquals("description", response.description());
+        assertEquals(1, response.ownerId());
+        assertEquals("ownerName", response.ownerName());
     }
 
     @Test
     @DisplayName("getStoreById() - 실패 storeId가 존재하지 않는 경우")
     void getStoreById_fail_storeNotFound() {
+        when(storeRepository.findById(NON_EXISTENT_ID)).thenReturn(Optional.empty());
 
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class,
+            () -> storeService.getStoreById(NON_EXISTENT_ID));
+
+        assertEquals("상점 ID: " + NON_EXISTENT_ID + "가 존재하지 않습니다.", exception.getMessage());
     }
 }
