@@ -60,6 +60,7 @@ public class StoreServiceTest {
         assertThat(saved.getDescription()).isEqualTo("description");
         assertThat(saved.getMember()).isEqualTo(member);
         assertThat(saved.getOwnerName()).isEqualTo("memberName");
+        verify(storeRepository, times(1)).save(any(Store.class));
     }
 
     @Test
